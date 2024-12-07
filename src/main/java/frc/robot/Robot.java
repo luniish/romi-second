@@ -4,10 +4,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.proto.Controller;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.motorcontrol.*;
+// import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -22,6 +26,17 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   private final RomiDrivetrain m_drivetrain = new RomiDrivetrain();
+
+  // define the motors
+  private Spark left_motor = new Spark(0); // PWM 0 is left motor
+  private Spark right_motor = new Spark(1); // PWM 1 is right motorw
+
+  //define Xbox Controller
+  private XboxController controller = new XboxController(0); // Xbox Controller is connected to port 0
+
+
+  // differintial drive object
+  // private DifferentialDrive drive = new DifferentialDrive(left_motor, right_motor);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -79,15 +94,40 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    right_motor.setInverted(true);
+
+  }
 
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
-  public static forward = (0.0);
+  public void teleopPeriodic() {
+  /// getting vaules from controller
+  double leftSpeed = controller.getLeftY(); //gets value for X left motor
+  double rightSpeed = controller.getRightY(); //gets value for y right motor
+
+  // setting the motor speed using motor values
+  left_motor.set(leftSpeed);
+  right_motor.set(rightSpeed);
+
+  
  
-  double var = XboxController.getLeftX();
+  }
+  
+ 
+
+  
+
+
+
+
+
+
+
+
+ 
+
 
 
   /** This function is called once when the robot is disabled. */
