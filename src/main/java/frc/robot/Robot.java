@@ -4,12 +4,15 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Encoder;
 // import edu.wpi.first.math.proto.Controller;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import pabeles.concurrency.ConcurrencyOps.Reset;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+
 // import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 
@@ -22,7 +25,7 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
+  // private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   // private final RomiDrivetrain m_drivetrain = new RomiDrivetrain();
@@ -37,6 +40,17 @@ public class Robot extends TimedRobot {
 
   // differintial drive object
   // private DifferentialDrive drive = new DifferentialDrive(left_motor, right_motor);
+  
+
+ //defining our encoders
+  private Encoder leftEncoder = new Encoder(4, 5);
+  private Encoder rightEncoder = new Encoder(6, 7);
+  double wheelDiameter = 2.6875;
+  double trackwidth = 2.75;
+  double pulsePerRev = 1440;
+
+  double circumfrence = Math.PI * wheelDiameter;
+  double disPerPulse = circumfrence / pulsePerRev;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -96,6 +110,11 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     right_motor.setInverted(true);
+    leftEncoder.reset();
+    rightEncoder.reset();
+
+    leftEncoder.setDistancePerPulse(disPerPulse);
+    rightEncoder.setDistancePerPulse(disPerPulse);
 
   }
 
@@ -104,16 +123,37 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
   /// getting vaules from controller
-  double leftSpeed = controller.getLeftY(); //gets value for X left motor
-  double rightSpeed = controller.getRightY(); //gets value for y right motor
+  double forward = -controller.getLeftY(); //gets value for X left motor
+  double turn = -controller.getRightX(); //gets value for y right motor
+  boolean spinRight = controller.getYButton(); //gets Y button
+  boolean spinLeft = controller.getXButton(); //gets X button
+
 
   // setting the motor speed using motor values
-  left_motor.set(leftSpeed);
-  right_motor.set(rightSpeed);
+  left_motor.set(forward - turn);
+  right_motor.set(forward + turn);
 
+
+  // if (spinLeft) {
+  //   left_motor.set(.5);
+  //   right_motor.set(-.5);
+  // }
+  // if (spinRight) {
+  //   left_motor.set(-.5);
+  //   right_motor.set(.5);
+
+  if (controller.getAButton()) {
+    leftEncoder.reset();
+    rightEncoder.reset();
+     while ((leftEncoder.getDistance() + rightEncoder.getDistance() / 2.0 < 5)) { //drive forward
+    left_motor.set(.5);
+    right_motor.set(.5);
+      
+     }
+
+      }
+    }
   
- 
-  }
   
  
 
