@@ -5,15 +5,14 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Encoder;
-// import edu.wpi.first.math.proto.Controller;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import pabeles.concurrency.ConcurrencyOps.Reset;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
-
 // import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+// import edu.wpi.first.math.proto.Controller;
 
 
 /**
@@ -130,8 +129,16 @@ public class Robot extends TimedRobot {
 
 
   // setting the motor speed using motor values
+  if(controller.getAButtonPressed()) {
+  left_motor.set(forward);
+  right_motor.set(turn);
+  }
+  else {
   left_motor.set(forward - turn);
   right_motor.set(forward + turn);
+
+  }
+  
 
 
   // if (spinLeft) {
@@ -142,17 +149,28 @@ public class Robot extends TimedRobot {
   //   left_motor.set(-.5);
   //   right_motor.set(.5);
 
+
+
   if (controller.getAButton()) {
     leftEncoder.reset();
     rightEncoder.reset();
      while ((leftEncoder.getDistance() + rightEncoder.getDistance() / 2.0 < 5)) { //drive forward
-    left_motor.set(.5);
+    left_motor.set(-.5);
     right_motor.set(.5);
       
      }
 
+
+
+
+
+
+    
+  }
+
+
       }
-    }
+    
   
   
  
